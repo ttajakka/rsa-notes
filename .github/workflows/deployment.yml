@@ -17,10 +17,10 @@ jobs:
       - uses: actions/setup-node@v3
       
       - name: Install backend dependencies
-        run: npm install
+        run: cd backend && npm install
 
       - name: Install frontend dependencies
-        run: cd ../frontend && npm install
+        run: cd frontend && npm install
       
       - name: Check style
         run: npm run eslint
