@@ -23,7 +23,7 @@ jobs:
         run: cd frontend && npm install
       
       - name: Check backend style
-        run: cd backend && npm run eslint
+        run: cd backend && npm run lint
       
       - name: build
         run: cd backend && npm run build:ui
