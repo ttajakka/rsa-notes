@@ -22,8 +22,8 @@ jobs:
       - name: Install frontend dependencies
         run: cd frontend && npm install
       
-      - name: Check style
-        run: npm run eslint
+      - name: Check backend style
+        run: cd backend && npm run eslint
       
       - name: build
-        run: npm run build:ui
+        run: cd backend && npm run build:ui
