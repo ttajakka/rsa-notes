@@ -1,5 +1,7 @@
 /* global BigInt */
 
+import { bigIntPow } from './crypto'
+
 export const isAscii = (str) => /^[\x20-\x7E]*$/.test(str)
 
 export const toPlainBlocks = (str) => {
@@ -47,7 +49,8 @@ const splitString = (str) => {
 export const wordToBase95 = (word) => {
   let num = BigInt(0)
   for (let i = 0; i < word.length; i++) {
-    num += BigInt(word.charCodeAt(i) - 32) * BigInt(95) ** BigInt(i)
+    // num += BigInt(word.charCodeAt(i) - 32) * BigInt(95) ** BigInt(i)
+    num += BigInt(word.charCodeAt(i) - 32) * bigIntPow(95, i)
   }
   return num
 }

@@ -1,10 +1,31 @@
 /* global BigInt */
 
+// implements fast powering algorithm for exponentiating BigInt's, since
+// BigInt(a) ** BigInt(b) seems to not work sometimes.
+export const bigIntPow = (b, x) => {
+  if (x < 0) console.error('exponent must be nonnegative')
+  b = BigInt(b)
+  x = BigInt(x)
+  let res = BigInt(1)
+  while (x) {
+    if (x % BigInt(2)) {
+      res = res * b
+      x = (x - BigInt(1)) / BigInt(2)
+    } else {
+      x = x / BigInt(2)
+    }
+    b = (b * b)
+  }
+  return res
+}
+
 // We choose MIN = 95^5 and MAX = 9*95^5 so that the product p*q of
 // any two integers MIN < p, q < MAX has exactly 11
 // digits in base 95
-const MIN = BigInt(95) * BigInt(95) * BigInt(95) * BigInt(95) * BigInt(95)
+
+// const MIN = BigInt(95) * BigInt(95) * BigInt(95) * BigInt(95) * BigInt(95)
 // const MIN = BigInt(95) ** BigInt(5)
+const MIN = bigIntPow(95, 5)
 const MAX = MIN * BigInt(9)
 
 const randomOdd = (min, max) => {
