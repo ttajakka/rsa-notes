@@ -1,6 +1,6 @@
-/* global BigInt */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 import { createPrivateKey, decrypt, encrypt } from './utils/crypto'
 import {
@@ -65,6 +65,8 @@ const MessageForm = ({
 }
 
 const MessageList = ({ users, messages }) => {
+  if ( !users.length && !messages.length) return null
+
   const [privKeyP, setP] = useState('')
   const [privKeyQ, setQ] = useState('')
   const [decrypted, setDecrypted] = useState('')
@@ -134,37 +136,33 @@ const MessageList = ({ users, messages }) => {
 }
 
 const App = () => {
-  const initialUsers = [
-    {
-      id: 1,
-      username: 'ukkis',
-      privKey: [BigInt(15732772019), BigInt(10270832711)],
-      pubKey: BigInt(15732772019) * BigInt(10270832711),
-    },
-    {
-      id: 2,
-      username: 'jeesus',
-      privKey: [5130180611, 10383561653],
-      pubKey: BigInt(5130180611) * BigInt(10383561653),
-    },
-  ]
+  const baseURL = 'http://localhost:3001'
 
-  // const initialMessages = [
-  //   { id: 1, recipientId: 1, ciphertext: ['838CD292'] },
-  //   { id: 2, recipientId: 2, ciphertext: ['9ABC393F'] },
-  // ]
-
-  const [users, setUsers] = useState(initialUsers)
+  const [users, setUsers] = useState([])
   const [messages, setMessages] = useState([])
   const [newUsername, setNewUsername] = useState('')
   const [newMessage, setNewMessage] = useState('')
   const [newPrivKey, setNewPrivKey] = useState([0, 0])
   const [privKeyvisible, setPrivKeyvisible] = useState(false)
 
-  const [newRecipient, setNewRecipient] = useState(users[0].username)
+  const [newRecipient, setNewRecipient] = useState()
   const [encryptEnabled, setEncryptEnabled] = useState(true)
 
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    axios.get(`${baseURL}/users`)
+      .then(res => {
+        setUsers(res.data)
+      })
+  }, [])
+
+  useEffect(() => {
+    axios.get(`${baseURL}/messages`)
+      .then(res => {
+        setMessages(res.data)
+      })
+  }, [])
 
   const handleUsername = (event) => {
     setNewUsername(event.target.value)

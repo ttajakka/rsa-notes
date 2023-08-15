@@ -11,7 +11,9 @@ const users = [
   },
 ]
 
-const messages = []
+const messages = [
+  { id: 0, recipientId: 0, ciphertext: ['838CD292'] },
+]
 
 app.use(cors())
 
@@ -40,9 +42,9 @@ app.post('/users', (req, res) => {
   const newUser = {
     id: users.length,
     username: body.username,
-    pubKey: body.pubKey
+    pubKey: body.pubKey,
   }
-  
+
   users.push(newUser)
 
   res.json(newUser)
