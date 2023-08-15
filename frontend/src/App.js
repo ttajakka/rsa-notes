@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
@@ -65,7 +64,7 @@ const MessageForm = ({
 }
 
 const MessageList = ({ users, messages }) => {
-  if ( !users.length && !messages.length) return null
+  if (!users.length && !messages.length) return null
 
   const [privKeyP, setP] = useState('')
   const [privKeyQ, setQ] = useState('')
@@ -151,17 +150,18 @@ const App = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    axios.get(`${baseURL}/users`)
-      .then(res => {
-        setUsers(res.data)
-      })
+    axios.get(`${baseURL}/users`).then((res) => {
+      setUsers(res.data)
+      if (res.data.length > 0) {
+        setNewRecipient(res.data[0].username)
+      }
+    })
   }, [])
 
   useEffect(() => {
-    axios.get(`${baseURL}/messages`)
-      .then(res => {
-        setMessages(res.data)
-      })
+    axios.get(`${baseURL}/messages`).then((res) => {
+      setMessages(res.data)
+    })
   }, [])
 
   const handleUsername = (event) => {
@@ -171,13 +171,23 @@ const App = () => {
   const createUser = (event) => {
     event.preventDefault()
     const [p, q] = createPrivateKey()
-    setUsers(
-      users.concat({
-        id: users.length + 1,
-        username: newUsername,
-        pubKey: p * q,
-      })
-    )
+
+    const newUser = {
+      username: newUsername,
+      pubKey: (p * q).toString(),
+    }
+
+    axios.post(`${baseURL}/users`, newUser).then((res) => {
+      setUsers(users.concat(res.data))
+    })
+
+    // setUsers(
+    //   users.concat({
+    //     id: users.length + 1,
+    //     username: newUsername,
+    //     pubKey: p * q,
+    //   })
+    // )
     setNewUsername('')
     setNewPrivKey([p, q])
     setPrivKeyvisible(true)
@@ -215,19 +225,24 @@ const App = () => {
 
     const cipherblocks = plainblocks.map((m) => encrypt(m, key))
 
-    setMessages(
-      messages.concat({
-        id: messages.length + 1,
-        recipientId: rec.id,
-        ciphertext: cipherblocks.map((c) => parseWordFromBase95(c)),
-      })
-    )
+    const messageToSend = {
+      recipientId: rec.id,
+      ciphertext: cipherblocks.map((c) => parseWordFromBase95(c)),
+    }
+
+    axios.post(`${baseURL}/messages`, messageToSend).then((res) => {
+      setMessages(messages.concat(res.data))
+    })
+
+    // setMessages(
+    //   messages.concat({
+    //     id: messages.length + 1,
+    //     recipientId: rec.id,
+    //     ciphertext: cipherblocks.map((c) => parseWordFromBase95(c)),
+    //   })
+    // )
 
     setNewMessage('')
-
-    // const decrypted = cipherblocks.map((c) =>
-    //   decrypt(c, rec.privKey[0], rec.privKey[1])
-    // )
   }
 
   return (

@@ -16,6 +16,7 @@ const messages = [
 ]
 
 app.use(cors())
+app.use(express.json())
 
 morgan.token('req-body', (req) => {
   return JSON.stringify(req.body)
@@ -52,6 +53,19 @@ app.post('/users', (req, res) => {
 
 app.get('/messages', (req, res) => {
   res.json(messages)
+})
+
+app.post('/messages', (req, res) => {
+  const body = req.body
+
+  const newMessage = {
+    id: messages.length,
+    recipientId: body.recipientId,
+    ciphertext: body.ciphertext
+  }
+
+  messages.push(newMessage)
+  res.json(newMessage)
 })
 
 module.exports = app
