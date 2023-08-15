@@ -1,12 +1,41 @@
 console.log('Starting crypto module')
 
-const MIN = parseInt('1000000', 16)
-const MAX = parseInt('FFFFFFF', 16)
+// We choose MIN and MAX so that the product p*q of
+// any two integers MIN < p, q < MAX has exactly 17
+// hexadecimal digits
+const MIN = parseInt('100000000', 16)
+const MAX = parseInt('3FFFFFFFF', 16)
+
+const MIN95 = BigInt(95) ** BigInt(5)
+const MAX95 = MIN95 * BigInt(9)
 
 const randomOdd = (min, max) => {
-  if (min % 2 === 0) min = min + 1
-  return BigInt(min + 2 * Math.floor(Math.random() * ((max - min) / 2)))
+  min = BigInt(min)
+  max = BigInt(max)
+  if (min % BigInt(2) === BigInt(0)) min = min + BigInt(1)
+  return BigInt(
+    min + BigInt(2 * Math.floor(Math.random() * Number(((max - min) / BigInt(2)))))
+  )
 }
+
+const Base95Length = (n) => {
+  n = BigInt(n)
+  let len = 0
+  while (n > 0) {
+    len += 1
+    n = n / BigInt(95)
+  }
+  return len
+}
+
+console.log(MIN95, Base95Length(MIN95))
+console.log(MAX95, Base95Length(MAX95))
+console.log(MIN95*MIN95, Base95Length(MIN95*MIN95))
+console.log(MAX95*MAX95, Base95Length(MAX95*MAX95))
+
+// for (let i = 0; i < 10; i++) {
+//   console.log(Base95Length(randomOdd(MIN95, MAX95) * randomOdd(MIN95, MAX95)))
+// }
 
 const GCD = (x, y) => {
   x = BigInt(x)
@@ -131,6 +160,17 @@ const createPrivateKey = () => {
   }
 }
 
+const [p, q] = createPrivateKey()
+console.log(p, q, (p * q))
+
+// for (let i = 0; i < 10; i++) {
+//   const [p ,q] = createPrivateKey()
+//   console.log(p.toString(16), q.toString(16), (p*q).toString(16))
+// }
+
+// console.log((MIN * MIN).toString(16))
+// console.log((MAX * MAX).toString(16))
+
 // outputs the RSA encryption of the message m using
 // public key N and encryption exponent 3
 const encrypt = (m, N) => {
@@ -149,21 +189,22 @@ const encrypt = (m, N) => {
 const decrypt = (c, p, q) => {
   let [r, s, d] = ExtEuclid((p - BigInt(1)) * (q - BigInt(1)), 3)
   while (d < 0) d = d + (p - BigInt(1)) * (q - BigInt(1))
+  console.log('from decrypt, multiplicative inverse:', d)
   return pow(c, d, p * q)
 }
 
-for (let i = 0; i < 10; i++) {
-  const [p, q] = createPrivateKey()
-  const N = p * q
-  const m = Math.floor(Math.random() * Number(N))
-  const c = encrypt(m, N)
-  const m2 = decrypt(c, p, q)
-  console.log(
-    `message: ${m.toString(16)}, encryption: ${encrypt(m, N).toString(16)}, decryption: ${m2.toString(16)}, correct? ${
-      BigInt(m) === BigInt(m2)
-    }`
-  )
-}
+// for (let i = 0; i < 10; i++) {
+//   const [p, q] = createPrivateKey()
+//   const N = p * q
+//   const m = Math.floor(Math.random() * Number(N))
+//   const c = encrypt(m, N)
+//   const m2 = decrypt(c, p, q)
+//   console.log(
+//     `message: ${m.toString(16)}, encryption: ${encrypt(m, N).toString(
+//       16
+//     )}, decryption: ${m2.toString(16)}, correct? ${BigInt(m) === BigInt(m2)}`
+//   )
+// }
 
 // for (let i = 100; i < 200; i++) {
 //   if (testPrimality(i)) console.log(i)
@@ -190,3 +231,31 @@ for (let i = 0; i < 10; i++) {
 // }
 
 //
+
+// const p = BigInt('0x' + '5385d13f')
+// const q = BigInt('0x' + '97f155dd')
+// const N = BigInt('0x' + '3192ab69ae4e8e63')
+// console.log(N, p, q, 'keys are correct?', N === p*q)
+
+// let count = 0
+
+// for (let i = 0; i < 1000; i++) {
+//   const m = Math.floor(Math.random() * Number(N))
+//   const c = encrypt(m, N)
+//   const m2 = decrypt(c, p, q)
+//   if (BigInt(m) !== BigInt(m2)) count += 1
+//   console.log(
+//     `message: ${m.toString(16)}, encryption: ${encrypt(m, N).toString(
+//       16
+//     )}, decryption: ${m2.toString(16)}, correct? ${BigInt(m) === BigInt(m2)}`
+//   )
+// }
+// console.log(`number of incorrect decryptions: ${count}`)
+
+// const m = '6173646600000000'
+
+// const m = BigInt('0x' + '6173646600000000')
+// const c = encrypt(m, N)
+// const d = decrypt(c, p, q)
+
+// console.log(m, c, d, m === d)
