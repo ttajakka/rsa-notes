@@ -1,5 +1,0 @@
-GET https://rsa-notes.fly.dev/health
-
-###
-
-GET http://localhost:3001/health
