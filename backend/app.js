@@ -11,21 +11,21 @@ const users = [
   },
 ]
 
-const messages = [
-  { id: 0, recipientId: 0, ciphertext: ['838CD292'] },
-]
+const messages = [{ id: 0, recipientId: 0, ciphertext: ['838CD292'] }]
 
 app.use(cors())
 app.use(express.json())
 
-morgan.token('req-body', (req) => {
-  return JSON.stringify(req.body)
-})
-app.use(
-  morgan(
-    ':method :url :status :req[content-length] - :response-time ms :req-body'
+if (process.env.NODE_ENV !== 'test') {
+  morgan.token('req-body', (req) => {
+    return JSON.stringify(req.body)
+  })
+  app.use(
+    morgan(
+      ':method :url :status :req[content-length] - :response-time ms :req-body'
+    )
   )
-)
+}
 
 app.use(express.static('build'))
 
@@ -61,7 +61,7 @@ app.post('/messages', (req, res) => {
   const newMessage = {
     id: messages.length,
     recipientId: body.recipientId,
-    ciphertext: body.ciphertext
+    ciphertext: body.ciphertext,
   }
 
   messages.push(newMessage)
@@ -69,4 +69,3 @@ app.post('/messages', (req, res) => {
 })
 
 module.exports = app
-9

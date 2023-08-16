@@ -3,7 +3,8 @@ module.exports = {
     browser: true,
     commonjs: true,
     es2021: true,
-    jest: true
+    jest: true,
+    "cypress/globals": true
   },
   extends: 'eslint:recommended',
   overrides: [
@@ -20,6 +21,9 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
   },
+  "plugins": [
+    "react", "jest", "cypress"
+  ],
   rules: {
     indent: ['error', 2],
     'linebreak-style': ['error', 'unix'],

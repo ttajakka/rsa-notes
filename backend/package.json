@@ -8,13 +8,18 @@
     "dev": "NODE_ENV=development nodemon index.js",
     "test": "NODE_ENV=test jest --verbose --runInBand",
     "lint": "eslint .",
-    "build:ui": "rm -rf build && cd ../frontend && npm run build && cp -r build ../backend"
+    "build:ui": "rm -rf build && cd ../frontend && npm run build && cp -r build ../backend",
+    "start:test": "NODE_ENV=test node index.js",
+    "cypress:open": "cypress open",
+    "test:e2e": "cypress run"
   },
   "author": "Tuomas Tajakka",
   "license": "ISC",
   "devDependencies": {
     "@flydotio/dockerfile": "^0.4.1",
+    "cypress": "^12.17.4",
     "eslint": "^8.46.0",
+    "eslint-plugin-cypress": "^2.14.0",
     "eslint-plugin-jest": "^27.2.3",
     "jest": "^29.6.2",
     "nodemon": "^3.0.1",

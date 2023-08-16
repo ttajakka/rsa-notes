@@ -14,8 +14,8 @@ const UserCreateForm = ({ handleSubmit, username, handleUsername }) => {
     <form onSubmit={handleSubmit}>
       <h2>Create user</h2>
       <div>
-        name: <input value={username} onChange={handleUsername} />
-        <button type="submit">Create</button>
+        username: <input id='username-input' value={username} onChange={handleUsername} />
+        <button id='create-user-button' type="submit">Create</button>
       </div>
     </form>
   )
@@ -26,8 +26,10 @@ const PrivKeyDisplay = ({ visible, privKey, clickHide }) => {
     <div>
       {visible && (
         <div>
-          Copy and save your private key: {privKey[0].toString()},{' '}
-          {privKey[1].toString()}
+          Copy and save your private key:{' '}
+          <span id='privKeyOutput' style={{ fontFamily: 'monospace' }}>
+            {privKey[0].toString()}, {privKey[1].toString()}
+          </span>
           <button onClick={clickHide}>Hide</button>
         </div>
       )}
