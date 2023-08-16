@@ -16,6 +16,7 @@ const messages = [{ id: 0, recipientId: 0, ciphertext: ['838CD292'] }]
 app.use(cors())
 app.use(express.json())
 
+// eslint-disable-next-line no-undef
 if (process.env.NODE_ENV !== 'test') {
   morgan.token('req-body', (req) => {
     return JSON.stringify(req.body)
