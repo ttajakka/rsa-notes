@@ -7,6 +7,8 @@ import {
   strToBase95,
   parseWordFromBase95,
   wordToBase95,
+  privKeyToHexStr,
+  hexStrToPrivKey,
 } from './utils/string'
 
 const UserCreateForm = ({ handleSubmit, username, handleUsername }) => {
@@ -28,7 +30,7 @@ const PrivKeyDisplay = ({ visible, privKey, clickHide }) => {
         <div>
           Copy and save your private key:{' '}
           <span id='privKeyOutput' style={{ fontFamily: 'monospace' }}>
-            {privKey[0].toString()}, {privKey[1].toString()}
+            {privKeyToHexStr(privKey)}
           </span>
           <button onClick={clickHide}>Hide</button>
         </div>
@@ -58,7 +60,7 @@ const MessageForm = ({
         </select>
         Message: <input value={newMessage} onChange={handleMessage} />
         <button type="submit" disabled={!enabled}>
-          Encrypt
+          Send
         </button>
       </div>
     </form>
@@ -68,15 +70,15 @@ const MessageForm = ({
 const MessageList = ({ users, messages }) => {
   if (!users.length && !messages.length) return null
 
-  const [privKeyP, setP] = useState('')
-  const [privKeyQ, setQ] = useState('')
+  const [privKey, setPrivKey] = useState('')
   const [decrypted, setDecrypted] = useState('')
   const [decryptedVisible, setDecryptedVisible] = useState(false)
 
   const handleDecrypt = (cipher) => () => {
+    const [p, q] = hexStrToPrivKey(privKey)
     const plaintext = cipher
       .map((c) => wordToBase95(c))
-      .map((c) => decrypt(c, privKeyP, privKeyQ)) // crypto.decrypt converts p and q to BigInts
+      .map((c) => decrypt(c, p, q))
       .map((p) => parseWordFromBase95(p))
       .join('')
     setDecrypted(plaintext)
@@ -96,7 +98,7 @@ const MessageList = ({ users, messages }) => {
               setDecryptedVisible(false)
             }}
           >
-            hide
+            Hide
           </button>
         </div>
       )
@@ -107,8 +109,7 @@ const MessageList = ({ users, messages }) => {
       <h2>Messages</h2>
       <div>
         Enter private key to decrypt:
-        <input value={privKeyP} onChange={(e) => setP(e.target.value)}></input>
-        <input value={privKeyQ} onChange={(e) => setQ(e.target.value)}></input>
+        <input value={privKey} onChange={(e) => setPrivKey(e.target.value)}></input>
       </div>
       <Decrypted visible={decryptedVisible} message={decrypted} />
       <table>
@@ -126,7 +127,7 @@ const MessageList = ({ users, messages }) => {
                 {m.ciphertext.join(' ')}
               </td>
               <td>
-                <button onClick={handleDecrypt(m.ciphertext)}>decrypt</button>
+                <button onClick={handleDecrypt(m.ciphertext)}>Read</button>
               </td>
             </tr>
           ))}
@@ -137,8 +138,8 @@ const MessageList = ({ users, messages }) => {
 }
 
 const App = () => {
-  // const baseURL = 'http://localhost:3001'
-  const baseURL = ''
+  const baseURL = 'http://localhost:3001'
+  // const baseURL = ''
 
   const [users, setUsers] = useState([])
   const [messages, setMessages] = useState([])
