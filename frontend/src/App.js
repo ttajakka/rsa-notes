@@ -138,8 +138,8 @@ const MessageList = ({ users, messages }) => {
 }
 
 const App = () => {
-  const baseURL = 'http://localhost:3001'
-  // const baseURL = ''
+  // const baseURL = 'http://localhost:3001'
+  const baseURL = ''
 
   const [users, setUsers] = useState([])
   const [messages, setMessages] = useState([])
