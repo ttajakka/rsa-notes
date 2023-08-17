@@ -76,3 +76,13 @@ export const base95ToStr = (input) => {
   }
   return output
 }
+
+export const privKeyToHexStr = ([p, q]) => {
+  return p.toString(16) + q.toString(16)
+}
+
+export const hexStrToPrivKey = (str) => {
+  const p = BigInt('0x' + str.substring(0,9))
+  const q = BigInt('0x' +  str.substring(9,18))
+  return [p, q]
+}

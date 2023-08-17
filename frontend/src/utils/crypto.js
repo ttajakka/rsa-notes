@@ -19,14 +19,13 @@ export const bigIntPow = (b, x) => {
   return res
 }
 
-// We choose MIN = 95^5 and MAX = 9*95^5 so that the product p*q of
+// We choose MIN = 3 * 95^5 and MAX = 8 * 95^5 so that the product p*q of
 // any two integers MIN < p, q < MAX has exactly 11
-// digits in base 95
+// digits in base 95 and exactly 18 hexadecimal digits
 
-// const MIN = BigInt(95) * BigInt(95) * BigInt(95) * BigInt(95) * BigInt(95)
-// const MIN = BigInt(95) ** BigInt(5)
-const MIN = bigIntPow(95, 5)
-const MAX = MIN * BigInt(9)
+const BASE = bigIntPow(95, 5)
+const MIN = BigInt(3) * BASE
+const MAX = BigInt(8) * BASE
 
 const randomOdd = (min, max) => {
   min = BigInt(min); max = BigInt(max)
