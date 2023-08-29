@@ -14,7 +14,7 @@ export const bigIntPow = (b, x) => {
     } else {
       x = x / BigInt(2)
     }
-    b = (b * b)
+    b = b * b
   }
   return res
 }
@@ -28,9 +28,12 @@ const MIN = BigInt(3) * BASE
 const MAX = BigInt(8) * BASE
 
 const randomOdd = (min, max) => {
-  min = BigInt(min); max = BigInt(max)
+  min = BigInt(min)
+  max = BigInt(max)
   if (min % BigInt(2) === BigInt(0)) min = min + BigInt(1)
-  return BigInt(Number(min) + 2 * Math.floor(Math.random() * (Number(max - min) / 2)))
+  return BigInt(
+    Number(min) + 2 * Math.floor(Math.random() * (Number(max - min) / 2))
+  )
 }
 
 const GCD = (x, y) => {
@@ -154,7 +157,8 @@ export const encrypt = (m, N) => {
 // outputs the RSA decryption of the ciphertext c assuming
 // it was encrypted with public key N = pq and encryption exponent 3
 export const decrypt = (c, p, q) => {
-  p = BigInt(p); q = BigInt(q)
+  p = BigInt(p)
+  q = BigInt(q)
   let [, , d] = ExtEuclid((p - BigInt(1)) * (q - BigInt(1)), 3)
   while (d < 0) d = d + (p - BigInt(1)) * (q - BigInt(1))
   return pow(c, d, p * q)
