@@ -3,15 +3,34 @@ const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
 
-const users = [
-  {
-    id: 0,
-    username: 'test_user',
-    pubKey: (BigInt(15732772019) * BigInt(10270832711)).toString(),
-  },
-]
+const User = require('./models/user')
+const Message = require('./models/message')
+const mongoose = require('mongoose')
+const url = process.env.MONGODB_URI // eslint-disable-line no-undef
 
-const messages = [{ id: 0, recipientId: 0, ciphertext: ['838CD292'] }]
+console.log(`connecting to ${url}`)
+mongoose.connect(url)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log(`error connecting to MongoDB: ${error.message}`)
+  })
+
+// const users = [
+//   {
+//     id: 0,
+//     username: 'test_user',
+//     pubKey: (BigInt(15732772019) * BigInt(10270832711)).toString(),
+//   },
+// ]
+
+// new User({
+//   username: 'test_user',
+//   pubKey: (BigInt(15732772019) * BigInt(10270832711)).toString()
+// }).save()
+
+// const messages = [{ id: 0, recipientId: 0, ciphertext: ['838CD292'] }]
 
 app.use(cors())
 app.use(express.json())
@@ -35,38 +54,45 @@ app.get('/health', (req, res) => {
 })
 
 app.get('/users', (req, res) => {
-  res.json(users)
+  // res.json(users)
+  User.find({}).then((users) => {
+    res.json(users)
+  })
 })
 
 app.post('/users', (req, res) => {
   const body = req.body
 
-  const newUser = {
-    id: users.length,
+  const user = new User({
     username: body.username,
     pubKey: body.pubKey,
-  }
+  })
 
-  users.push(newUser)
+  // users.push(newUser)
+  user.save().then(savedUser => {
+    res.json(savedUser)
+  })
 
-  res.json(newUser)
+  // res.json(newUser)
 })
 
 app.get('/messages', (req, res) => {
-  res.json(messages)
+  Message.find({}).then((messages) => {
+    res.json(messages)
+  })
 })
 
 app.post('/messages', (req, res) => {
   const body = req.body
 
-  const newMessage = {
-    id: messages.length,
+  const message = new Message({
     recipientId: body.recipientId,
     ciphertext: body.ciphertext,
-  }
+  })
 
-  messages.push(newMessage)
-  res.json(newMessage)
+  message.save().then(savedMessage => {
+    res.json(savedMessage)
+  })
 })
 
 module.exports = app

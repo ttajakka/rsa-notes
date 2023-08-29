@@ -104,6 +104,7 @@ const MessageList = ({ users, messages }) => {
       )
   }
 
+  // TODO: private key validation
   return (
     <div>
       <h2>Messages</h2>
@@ -138,8 +139,8 @@ const MessageList = ({ users, messages }) => {
 }
 
 const App = () => {
-  // const baseURL = 'http://localhost:3001'
-  const baseURL = ''
+  const baseURL = 'http://localhost:3001'
+  // const baseURL = ''
 
   const [users, setUsers] = useState([])
   const [messages, setMessages] = useState([])
@@ -185,13 +186,6 @@ const App = () => {
       setUsers(users.concat(res.data))
     })
 
-    // setUsers(
-    //   users.concat({
-    //     id: users.length + 1,
-    //     username: newUsername,
-    //     pubKey: p * q,
-    //   })
-    // )
     setNewUsername('')
     setNewPrivKey([p, q])
     setPrivKeyvisible(true)
@@ -237,14 +231,6 @@ const App = () => {
     axios.post(`${baseURL}/messages`, messageToSend).then((res) => {
       setMessages(messages.concat(res.data))
     })
-
-    // setMessages(
-    //   messages.concat({
-    //     id: messages.length + 1,
-    //     recipientId: rec.id,
-    //     ciphertext: cipherblocks.map((c) => parseWordFromBase95(c)),
-    //   })
-    // )
 
     setNewMessage('')
   }
