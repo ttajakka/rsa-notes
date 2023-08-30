@@ -35,6 +35,8 @@ jobs:
 
       - name: test backend
         run: cd backend && npm run test
+        env:
+          MONGODB_URI: ${{ secrets.TEST_MONGODB_URI}}
 
       - name: e2e tests
         uses: cypress-io/github-action@v5
