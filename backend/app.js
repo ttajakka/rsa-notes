@@ -6,7 +6,9 @@ const morgan = require('morgan')
 const User = require('./models/user')
 const Message = require('./models/message')
 const mongoose = require('mongoose')
-const url = process.env.MONGODB_URI // eslint-disable-line no-undef
+// const url = process.env.MONGODB_URI // eslint-disable-line no-undef
+const config = require('./utils/config')
+const url = config.MONGODB_URI
 
 console.log(`connecting to ${url}`)
 mongoose.connect(url)

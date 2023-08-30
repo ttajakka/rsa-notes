@@ -1,8 +1,11 @@
-// require('dotenv').config()
+require('dotenv').config()
 
-// eslint-disable-next-line no-undef
+/* eslint-disable no-undef */
 const PORT = process.env.PORT || 3001
+const MONGODB_URI = process.env.NODE_ENV === 'test'
+  ? process.env.TEST_MONGODB_URI
+  : process.env.MONGODB_URI
 
 module.exports = {
-  PORT
+  PORT, MONGODB_URI
 }
