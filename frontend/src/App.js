@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
@@ -139,7 +140,10 @@ const MessageList = ({ users, messages }) => {
 
 const App = () => {
   // const baseURL = 'http://localhost:3001'
-  const baseURL = ''
+  // const baseURL = 'http://localhost:8080/api'
+  // eslint-disable-next-line no-undef
+  const baseURL = process.env.REACT_APP_BACKEND_URL
+  // const baseURL = ''
 
   const [users, setUsers] = useState([])
   const [messages, setMessages] = useState([])

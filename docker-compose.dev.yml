@@ -1,0 +1,40 @@
+services:
+  app:
+    image: rsa-front-dev
+    build:
+      context: .
+      dockerfile: ./frontend/dev.Dockerfile
+    environment: 
+      REACT_APP_BACKEND_URL: http://localhost:8080/api
+    volumes:
+      - ./frontend/:/usr/src/app
+    container_name: rsa-front-dev
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: rsa_db
+    volumes:
+      - ./backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./backend/mongo_data:/data/db
+    
+  server:
+    image: rsa-server-dev
+    environment:
+      - MONGO_URL=mongodb://the_username:the_password@mongo:27017/rsa_db
+    volumes:
+      - ./backend:/usr/src/backend
+    container_name: rsa-server-dev
+
+  nginx:
+    image: nginx:1.20.1
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    container_name: reverse-proxy
+    depends_on:
+      - app
+      - server

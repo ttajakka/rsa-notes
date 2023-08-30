@@ -2,16 +2,21 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
+const mongoose = require('mongoose')
 
-const users = [
-  {
-    id: 0,
-    username: 'test_user',
-    pubKey: (BigInt(15732772019) * BigInt(10270832711)).toString(),
-  },
-]
+const User = require('./mongo/models/user')
+const Message = require('./mongo/models/message')
+const config = require('./utils/config')
+const mongo_url = config.MONGO_URL
 
-const messages = [{ id: 0, recipientId: 0, ciphertext: ['838CD292'] }]
+console.log(`connecting to MongoDB: ${mongo_url}`)
+mongoose.connect(mongo_url)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log(`error connecting to MongoDB: ${error.message}`)
+  })
 
 app.use(cors())
 app.use(express.json())
@@ -34,39 +39,46 @@ app.get('/health', (req, res) => {
   res.send('ok')
 })
 
+app.get('/hello', (req, res) => {
+  res.send('hello!')
+})
+
 app.get('/users', (req, res) => {
-  res.json(users)
+  User.find({}).then((users) => {
+    res.json(users)
+  })
 })
 
 app.post('/users', (req, res) => {
   const body = req.body
 
-  const newUser = {
-    id: users.length,
+  const user = new User({
     username: body.username,
     pubKey: body.pubKey,
-  }
+  })
 
-  users.push(newUser)
-
-  res.json(newUser)
+  user.save().then(savedUser => {
+    res.json(savedUser)
+  })
 })
 
 app.get('/messages', (req, res) => {
-  res.json(messages)
+  Message.find({}).then((messages) => {
+    res.json(messages)
+  })
 })
 
 app.post('/messages', (req, res) => {
   const body = req.body
 
-  const newMessage = {
-    id: messages.length,
+  const message = new Message({
     recipientId: body.recipientId,
     ciphertext: body.ciphertext,
-  }
+  })
 
-  messages.push(newMessage)
-  res.json(newMessage)
+  message.save().then(savedMessage => {
+    res.json(savedMessage)
+  })
 })
 
 module.exports = app
