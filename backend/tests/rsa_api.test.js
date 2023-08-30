@@ -1,7 +1,24 @@
+const mongoose = require('mongoose')
 const superstest = require('supertest')
 const app = require('../app')
-
 const api = superstest(app)
+const User = require('../models/user')
+const Message = require('../models/message')
+
+beforeAll(async () => {
+  await User.deleteMany({})
+  await Message.deleteMany({})
+  let userObject = new User({
+    username: 'test_user',
+    pubKey: 'abcdefg',
+  })
+  const test_user = await userObject.save()
+  let messageObject = new Message({
+    ciphertext: 'xyz',
+    recipientId: test_user._id
+  })
+  await messageObject.save()
+})
 
 describe('testing users endpoint:', () => {
   test('users are returned as json', async () => {
@@ -29,7 +46,6 @@ describe('testing users endpoint:', () => {
       pubKey: 'ABCDEF',
     })
 
-    expect(response.body.id).toBe(1)
     expect(response.body.username).toBe('test_user2')
     expect(response.body.pubKey).toBe('ABCDEF')
   })
@@ -50,10 +66,14 @@ describe('testing messages endpoint:', () => {
   })
 
   test('a message can be added', async () => {
-    const response = await api.post('/messages').send({ recipientId: 0, ciphertext: 'abcdefg'})
+    const response = await api
+      .post('/messages')
+      .send({ recipientId: 0, ciphertext: 'abcdefg' })
 
-    expect(response.body.id).toBe(1)
-    expect(response.body.recipientId).toBe(0)
-    expect(response.body.ciphertext).toBe('abcdefg')
+    expect(response.body.ciphertext[0]).toBe('abcdefg')
   })
+})
+
+afterAll(async () => {
+  await mongoose.connection.close()
 })
